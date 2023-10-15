@@ -9,10 +9,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appTheme = Provider.of<ThemeChanger>(context);
+
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
         title: Text('Diseños en Flutter'),
+        backgroundColor: appTheme.currentTheme.colorScheme.background,
       ),
       drawer: _MainMenu(),
       body: _OptionsList(),
@@ -23,14 +26,19 @@ class HomePage extends StatelessWidget {
 class _OptionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appThemes = Provider.of<ThemeChanger>(context);
+
     return ListView.separated(
       physics: BouncingScrollPhysics(),
-      separatorBuilder: (context, i) => Divider(color: Colors.blue),
+      separatorBuilder: (context, i) =>
+          Divider(color: appThemes.currentTheme.primaryColorLight),
       itemCount: pageRoutes.length,
       itemBuilder: (context, i) => ListTile(
-        leading: FaIcon(pageRoutes[i].icon, color: Colors.blue),
+        leading: FaIcon(pageRoutes[i].icon,
+            color: appThemes.currentTheme.colorScheme.secondary),
         title: Text(pageRoutes[i].title),
-        trailing: Icon(Icons.chevron_right, color: Colors.blue),
+        trailing: Icon(Icons.chevron_right,
+            color: appThemes.currentTheme.colorScheme.secondary),
         onTap: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => pageRoutes[i].page));
@@ -54,16 +62,18 @@ class _MainMenu extends StatelessWidget {
               width: double.infinity,
               height: 200.0,
               child: CircleAvatar(
-                backgroundColor: Colors.blue,
+                backgroundColor:
+                    themeProvider.currentTheme.colorScheme.secondary,
                 child: Text('MS', style: TextStyle(fontSize: 50.0)),
               ),
             ),
             Expanded(child: _OptionsList()),
             ListTile(
-              leading: Icon(Icons.lightbulb_outline, color: Colors.blue),
+              leading: Icon(Icons.lightbulb_outline,
+                  color: themeProvider.currentTheme.colorScheme.secondary),
               title: Text('Dark Mode'),
               trailing: Switch.adaptive(
-                  activeColor: Colors.blue,
+                  activeColor: themeProvider.currentTheme.colorScheme.secondary,
                   value: themeProvider.darkTheme,
                   onChanged: (value) {
                     themeProvider.darkTheme = value;
@@ -75,10 +85,12 @@ class _MainMenu extends StatelessWidget {
               left: false,
               top: false,
               child: ListTile(
-                leading: Icon(Icons.add_to_home_screen, color: Colors.blue),
+                leading: Icon(Icons.add_to_home_screen,
+                    color: themeProvider.currentTheme.colorScheme.secondary),
                 title: Text('Custom Theme'),
                 trailing: Switch.adaptive(
-                    activeColor: Colors.blue,
+                    activeColor:
+                        themeProvider.currentTheme.colorScheme.secondary,
                     value: themeProvider.customTheme,
                     onChanged: (value) {
                       themeProvider.customTheme = value;

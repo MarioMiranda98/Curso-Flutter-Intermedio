@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:themes_app/src/theme/theme.dart';
 
 import 'package:themes_app/src/widgets/pinterest_grid_widget.dart';
 import 'package:themes_app/src/widgets/pinterest_menu.dart';
@@ -32,14 +33,17 @@ class _PinterestMenuHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menuModelProvider = Provider.of<MenuModel>(context);
+    final appTheme = Provider.of<ThemeChanger>(context);
+
     return Positioned(
       bottom: 30.0,
       child: SizedBox(
         width: mq.size.width,
         child: Align(
           child: PinterestMenu(
-              // activeColor: Colors.teal[900]!,
+              activeColor: appTheme.currentTheme.colorScheme.secondary,
               // inactiveColor: Colors.blueGrey[200]!,
+              backgroundColor: appTheme.currentTheme.scaffoldBackgroundColor,
               showMenu: menuModelProvider.showMenu,
               items: [
                 PinterestButton(onPressed: () {}, icon: Icons.pie_chart),
