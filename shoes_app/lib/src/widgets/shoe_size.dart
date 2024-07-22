@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shoes_app/src/models/shoe_model.dart';
+import 'package:shoes_app/src/pages/shoe_desc_page.dart';
 
 class ShoeSize extends StatelessWidget {
-  ShoeSize();
+  final bool fullScreen;
+
+  ShoeSize({
+    this.fullScreen = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 430.0,
-      margin: EdgeInsets.symmetric(
-        horizontal: 30.0,
-        vertical: 5.0,
-      ),
-      decoration: BoxDecoration(
-        color: Color(0XFFF8D468),
-        borderRadius: BorderRadius.circular(50.0),
-      ),
-      child: Column(
-        children: [
-          _ShoeWithShadow(),
-          _Sizes(),
-        ],
+    return GestureDetector(
+      onTap: () => _onHandleTap(context),
+      child: Container(
+        width: double.infinity,
+        height: 430.0,
+        margin: fullScreen
+            ? EdgeInsets.symmetric(horizontal: 5.0)
+            : EdgeInsets.symmetric(
+                horizontal: 30.0,
+                vertical: 5.0,
+              ),
+        decoration: BoxDecoration(
+          color: Color(0XFFF8D468),
+          borderRadius: BorderRadius.circular(fullScreen ? 40.0 : 50.0),
+        ),
+        child: Column(
+          children: [
+            _ShoeWithShadow(),
+            if (!fullScreen) _Sizes(),
+          ],
+        ),
       ),
     );
+  }
+
+  void _onHandleTap(BuildContext context) {
+    if (!fullScreen) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => ShoeDescPage()));
+    }
   }
 }
 
@@ -31,13 +50,14 @@ class _ShoeWithShadow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shoeModel = Provider.of<ShoeModel>(context);
     return Container(
       margin: EdgeInsets.only(top: 50.0, bottom: 16.0, left: 50.0, right: 50.0),
       child: Stack(
         children: [
           _ShoeShadow(),
           Image(
-            image: AssetImage('assets/imgs/azul.png'),
+            image: AssetImage(shoeModel.assetImage),
           )
         ],
       ),
@@ -80,69 +100,73 @@ class _Sizes extends StatefulWidget {
 }
 
 class _SizesState extends State<_Sizes> {
-  int _selectedIndex = -1;
-
   @override
   Widget build(BuildContext context) {
+    final shoeModel = Provider.of<ShoeModel>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _Size(
-          size: '20',
+          size: 20,
           index: 0,
-          isSelected: _selectedIndex == 0,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 20,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
         _Size(
-          size: '22',
+          size: 22,
           index: 1,
-          isSelected: _selectedIndex == 1,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 22,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
         _Size(
-          size: '24',
+          size: 24,
           index: 2,
-          isSelected: _selectedIndex == 2,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 24,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
         _Size(
-          size: '26',
+          size: 26,
           index: 3,
-          isSelected: _selectedIndex == 3,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 26,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
         _Size(
-          size: '28',
+          size: 28,
           index: 4,
-          isSelected: _selectedIndex == 4,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 28,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
         _Size(
-          size: '30',
+          size: 30,
           index: 5,
-          isSelected: _selectedIndex == 5,
-          onHandleTap: _onHandleTap,
+          isSelected: shoeModel.size == 30,
+          onHandleTap: (double size, bool isSelected) =>
+              _onHandleTap(context, size, isSelected),
         ),
       ],
     );
   }
 
-  void _onHandleTap(int index, bool isSelected) {
-    setState(() {
-      if (isSelected) {
-        _selectedIndex = -1;
-      } else {
-        _selectedIndex = index;
-      }
-    });
+  void _onHandleTap(BuildContext context, double size, bool isSelected) {
+    final shoeModel = Provider.of<ShoeModel>(context, listen: false);
+    if (isSelected) {
+      shoeModel.size = -1;
+    } else {
+      shoeModel.size = size.toDouble();
+    }
   }
 }
 
 class _Size extends StatelessWidget {
-  final String size;
+  final double size;
   final int index;
   final bool isSelected;
-  final void Function(int index, bool isSelected) onHandleTap;
+  final void Function(double size, bool isSelected) onHandleTap;
 
   _Size({
     required this.size,
@@ -154,7 +178,7 @@ class _Size extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onHandleTap(index, isSelected),
+      onTap: () => onHandleTap(size, isSelected),
       child: Container(
         width: 45.0,
         height: 45.0,
@@ -173,7 +197,7 @@ class _Size extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            size,
+            size.toStringAsFixed(0),
             style: TextStyle(
               color: isSelected ? Colors.white : Color(0XFFF1A23A),
               fontSize: 20.0,
